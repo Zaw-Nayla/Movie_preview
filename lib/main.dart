@@ -1,8 +1,11 @@
 import 'package:moviedb/Object.dart';
+import 'package:moviedb/logIn.dart';
+import 'package:moviedb/register.dart';
 
 import 'API.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'frontScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,11 +18,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      
+      initialRoute: '/',
+      routes: {
+        '/':(context) => const FrontScreen(),
+        '/register' :(context) => const RegisterPage(),
+        '/login' :(context) => const MyLogInPage(),
+        '/main' :(context) => const HomePage(),
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const HomePage(),
     );
   }
 }
