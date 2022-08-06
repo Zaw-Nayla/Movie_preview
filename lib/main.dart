@@ -1,11 +1,12 @@
-import 'package:moviedb/Object.dart';
+import 'package:moviedb/model.dart';
 import 'package:moviedb/logIn.dart';
 import 'package:moviedb/register.dart';
 
-import 'API.dart';
+import 'api.dart';
+import 'creditsmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'frontScreen.dart';
+import 'landingpage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,13 +19,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      
       initialRoute: '/',
       routes: {
-        '/':(context) => const FrontScreen(),
-        '/register' :(context) => const RegisterPage(),
-        '/login' :(context) => const MyLogInPage(),
-        '/main' :(context) => const HomePage(),
+        '/': (context) => const FrontScreen(),
+        '/register': (context) => const RegisterPage(),
+        '/login': (context) => const MyLogInPage(),
+        '/main': (context) => const HomePage(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -43,6 +43,9 @@ class HomePage extends StatefulWidget {
 
 List<Movie>? playingMovies;
 List<Movie>? upComingMovies;
+List<Movie>? popular;
+List<Cast>? cast;
+int movieid = 438148;
 int ind = 0;
 
 class _HomePageState extends State<HomePage> {
@@ -58,6 +61,18 @@ class _HomePageState extends State<HomePage> {
         upComingMovies = value;
       });
     });
+
+    API().popular().then((value) {
+      setState(() {
+        popular = value;
+      });
+    });
+
+    CreditsAPI().credits(movieid).then((value) {
+      setState(() {
+        cast = value;
+      });
+    });
   }
 
   @override
@@ -71,15 +86,24 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Movie DataBase'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+            splashRadius: 4,
+          ),
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/');
+              },
+              icon: const Icon(Icons.logout_outlined))
+        ],
+        title: const Text('Movies DataBase'),
         backgroundColor: const Color.fromARGB(80, 158, 158, 158),
       ),
       body: Column(children: [
-        // const SizedBox(
-        //   height: 10,
-        // ),
         Container(
-          // color: Colors.grey,
           width: MediaQuery.of(context).size.width,
           height: 50,
           padding: const EdgeInsets.all(5),
@@ -112,13 +136,11 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       return Design(
                         imageint: index,
-                        Movietype: playingMovies,
-                        second: true,
+                        movieType: playingMovies,
                       );
                     }),
               ),
         Container(
-          // color: Colors.grey,
           width: MediaQuery.of(context).size.width,
           height: 50,
           padding: const EdgeInsets.all(5),
@@ -151,8 +173,44 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       return Design(
                         imageint: index,
-                        Movietype: upComingMovies,
-                        second: false,
+                        movieType: upComingMovies,
+                      );
+                    }),
+              ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: const [
+              Text(
+                ' Popular ',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              )
+            ],
+          ),
+        ),
+        popular == null
+            ? const Center(
+                child: SpinKitCubeGrid(
+                  color: Colors.grey,
+                  size: 40.0,
+                ),
+              )
+            : SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 160,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: popular!.length,
+                    itemBuilder: (context, index) {
+                      return Design(
+                        imageint: index,
+                        movieType: popular,
                       );
                     }),
               ),
@@ -163,14 +221,12 @@ class _HomePageState extends State<HomePage> {
 
 class Design extends StatelessWidget {
   int imageint;
-  List<Movie>? Movietype;
-  bool second;
-  Design(
-      {Key? key,
-      required this.imageint,
-      required this.Movietype,
-      required this.second})
-      : super(key: key);
+  List<Movie>? movieType;
+  Design({
+    Key? key,
+    required this.imageint,
+    required this.movieType,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -180,13 +236,10 @@ class Design extends StatelessWidget {
         showDialog(
             context: context,
             builder: (context) {
-              return PopupDialog(
-                movienum: imageint,
-                Movietype: second ? playingMovies : upComingMovies,
-              );
+              return PopupDialog(movienum: imageint, Movietype: movieType);
             });
       },
-      child: Movietype == null
+      child: movieType == null
           ? const Center(
               child: SpinKitCubeGrid(
                 color: Colors.grey,
@@ -201,7 +254,7 @@ class Design extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
                       image: NetworkImage(
-                          'https://image.tmdb.org/t/p/original${Movietype![imageint].backdropPath}'))),
+                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}'))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +263,7 @@ class Design extends StatelessWidget {
                     backgroundColor: const Color.fromARGB(142, 0, 0, 0),
                     radius: 12,
                     child: Text(
-                      '${Movietype![imageint].voteAverage}',
+                      '${movieType![imageint].voteAverage}',
                       style: const TextStyle(
                         color: Colors.lightGreen,
                         fontSize: 10,
@@ -220,7 +273,7 @@ class Design extends StatelessWidget {
                   SizedBox(
                     width: 200,
                     child: Text(
-                      Movietype![imageint].originalTitle,
+                      movieType![imageint].originalTitle,
                       style: const TextStyle(
                           color: Color.fromARGB(255, 255, 255, 255)),
                     ),
@@ -322,7 +375,8 @@ class PopupDialog extends StatelessWidget {
                   child: SizedBox(
                     width: 150,
                     child: Text(
-                      'Casts : ',
+                      'Casts :',
+                      maxLines: 2,
                       style: TextStyle(
                         fontSize: 15,
                       ),
@@ -336,7 +390,7 @@ class PopupDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: GestureDetector(
                         onTap: () {},
                         child: const CircleAvatar(
@@ -346,7 +400,7 @@ class PopupDialog extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: GestureDetector(
                         onTap: () {},
                         child: const CircleAvatar(
@@ -360,7 +414,7 @@ class PopupDialog extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: GestureDetector(
                         onTap: () {},
                         child: const CircleAvatar(

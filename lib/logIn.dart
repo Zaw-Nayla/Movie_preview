@@ -30,176 +30,182 @@ class _MyLogInPageState extends State<MyLogInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Form(
         key: _formKey,
         child: Container(
+          // constraints: const BoxConstraints.expand(),
           width: double.infinity,
+          // height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
+            
               image: DecorationImage(
             image: AssetImage('images/netflix.jpg'),
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
           )),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(30),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        'Unlimited Movies, Shows, and More',
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: <Shadow>[
-                            Shadow(
-                              offset: Offset(10.0, 10.0),
-                              blurRadius: 3.0,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                            Shadow(
-                              offset: Offset(5.0, 5.0),
-                              blurRadius: 5.0,
-                              color: Colors.black,
-                            ),
-                          ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(30),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'Unlimited Movies, Shows, and More',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(10.0, 10.0),
+                                blurRadius: 3.0,
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                              Shadow(
+                                offset: Offset(5.0, 5.0),
+                                blurRadius: 5.0,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.all(20),
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  height: 50,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(colors: [
-                        Colors.white.withOpacity(0.5),
-                        Colors.white.withOpacity(0.5),
-                      ])),
-                  child: TextFormField(
-                    controller: usernamecontroller,
-                    autovalidateMode: submitted
-                        ? AutovalidateMode.always
-                        : AutovalidateMode.disabled,
-                    validator: RequiredValidator(errorText: 'Required'),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter Your Account',
+                      ],
                     ),
                   ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.all(20),
-                  height: 50,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(colors: [
-                        Colors.white.withOpacity(0.5),
-                        Colors.white.withOpacity(0.5),
-                      ])),
-                  child: TextFormField(
-                    controller: passwordcontroller,
-                    obscureText: pass,
-                    autovalidateMode: submitted
-                        ? AutovalidateMode.always
-                        : AutovalidateMode.disabled,
-                    validator: passwordValidator,
-                    onChanged: (value) {},
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(
-                        Icons.key_sharp,
-                        color: Colors.black,
-                      ),
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              pass = !pass;
-                            });
-                          },
-                          icon: pass
-                              ? const Icon(
-                                  Icons.remove_red_eye,
-                                  color: Color.fromARGB(163, 20, 20, 20),
-                                )
-                              : const Icon(
-                                  Icons.visibility_off,
-                                  color: Color.fromARGB(163, 19, 18, 18),
-                                )),
-                      hintText: 'Enter Password',
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-            ElevatedButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final String? username = prefs.getString('userValue');
-                  final String? password = prefs.getString('passValue');
-                  setState(() {
-                    print(
-                        '$username + $password');
-                    if (usernamecontroller.text == username &&
-                        passwordcontroller.text == password) {
-                      Navigator.pushNamed(context, '/main');
-                      usernamecontroller.clear();
-                      passwordcontroller.clear();
-                    }
-                  });
-                },style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
-                  padding: const EdgeInsets.only(left: 120, right: 120),
-                  elevation: 15,
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    'Log In',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: 'Libre',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                )),
-                Container(
+                  Container(
                     alignment: Alignment.center,
                     margin: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Need to Create One?',
-                          style: TextStyle(
-                              color: Color.fromARGB(143, 255, 255, 255)),
-                        ),
-                        TextButton(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 50,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Colors.white.withOpacity(0.5),
+                          Colors.white.withOpacity(0.5),
+                        ])),
+                    child: TextFormField(
+                      controller: usernamecontroller,
+                      autovalidateMode: submitted
+                          ? AutovalidateMode.always
+                          : AutovalidateMode.disabled,
+                      validator: RequiredValidator(errorText: 'Required'),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter Your Account',
+                      ),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 50,
+                    width: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: LinearGradient(colors: [
+                          Colors.white.withOpacity(0.5),
+                          Colors.white.withOpacity(0.5),
+                        ])),
+                    child: TextFormField(
+                      controller: passwordcontroller,
+                      obscureText: pass,
+                      autovalidateMode: submitted
+                          ? AutovalidateMode.always
+                          : AutovalidateMode.disabled,
+                      validator: passwordValidator,
+                      onChanged: (value) {},
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: IconButton(
                             onPressed: () {
                               setState(() {
-                                Navigator.pushNamed(context, '/register');
+                                pass = !pass;
                               });
                             },
-                            child: const Text('Sign UP',
+                            icon: pass
+                                ? const Icon(
+                                    Icons.remove_red_eye,
+                                    color: Color.fromARGB(163, 20, 20, 20),
+                                  )
+                                : const Icon(
+                                    Icons.visibility_off,
+                                    color: Color.fromARGB(163, 19, 18, 18),
+                                  )),
+                        hintText: 'Enter Password',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+              ElevatedButton(
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    final String? username = prefs.getString('userValue');
+                    final String? password = prefs.getString('passValue');
+                    setState(() {
+                      print(
+                          '$username + $password');
+                      if (usernamecontroller.text == username &&
+                          passwordcontroller.text == password) {
+                        Navigator.pushNamed(context, '/main');
+                        usernamecontroller.clear();
+                        passwordcontroller.clear();
+                      }
+                    });
+                  },style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    padding: const EdgeInsets.only(left: 120, right: 120),
+                    elevation: 15,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Log In',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Libre',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  )),
+                  Container(
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.all(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Need to Create One?',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 148, 209, 240)
-                            ),))
-                      ],
-                    ))
-          ]),
-        ),
+                                color: Color.fromARGB(143, 255, 255, 255)),
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  Navigator.pushNamed(context, '/register');
+                                });
+                              },
+                              child: const Text('Sign UP',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 148, 209, 240)
+                              ),)),
+                              const SizedBox(
+                                height: 100,
+                              )
+                        ],
+                      ))
+                      ]),
+            ),
+                ),
       ),
-    ));
+        ));
   }
 }

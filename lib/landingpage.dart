@@ -40,7 +40,7 @@ class _FrontScreenState extends State<FrontScreen> {
                       style: TextStyle(
                           color: Colors.red,
                           fontFamily: 'Libre',
-                          fontSize: 45,
+                          fontSize: 40,
                           fontWeight: FontWeight.bold),
                     )),
                 const SizedBox(
