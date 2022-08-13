@@ -35,14 +35,14 @@ class Movie {
   });
 
   bool adult;
-  String backdropPath;
+  String? backdropPath;
   int id;
-  String originalTitle;
-  String overview;
+  String? originalTitle;
+  String? overview;
   double popularity;
-  String posterPath;
-  String releaseDate;
-  String title;
+  String? posterPath;
+  String? releaseDate;
+  String? title;
   double voteAverage;
   int voteCount;
 

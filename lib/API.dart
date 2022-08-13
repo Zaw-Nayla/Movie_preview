@@ -1,7 +1,10 @@
 // ignore: file_names
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:moviedb/creditsmodel.dart';
 import 'package:moviedb/model.dart';
+import 'package:moviedb/search.dart';
 
 class API {
   Future<List<Movie>> nowPlaying() async {
@@ -48,19 +51,33 @@ class API {
       // print(resp.statusCode);
     }
   }
-}
 
-class CreditsAPI {
-  Future<List<Cast>> credits(int id) async {
+  Future<List<Movie>> getSearch(String str) async {
     var url = Uri.parse(
-        'https://api.themoviedb.org/3/movie/$id/credits?api_key=050c28541f900007285c3020069bfd62&language=en-US');
+        'https://api.themoviedb.org/3/search/movie?query=$str&api_key=050c28541f900007285c3020069bfd62');
     final resp = await http.get(url);
+    print(resp.statusCode);
     if (resp.statusCode == 200) {
-      var casts = Credits.fromRawJson(resp.body);
-      return casts.cast;
+      var movieresult = OverallResp.fromRawJson(resp.body);
+      return movieresult.results;
     } else {
-      print(resp.statusCode);
       throw Exception('Unable to Assest API');
+      // print(resp.statusCode);
     }
   }
 }
+
+// class CreditsAPI {
+//   Future<List<Cast>> credits(int id) async {
+//     var url = Uri.parse(
+//         'https://api.themoviedb.org/3/movie/$id/credits?api_key=050c28541f900007285c3020069bfd62&language=en-US');
+//     final resp = await http.get(url);
+//     if (resp.statusCode == 200) {
+//       var casts = Credits.fromRawJson(resp.body);
+//       return casts.cast;
+//     } else {
+//       print(resp.statusCode);
+//       throw Exception('Unable to Assest API');
+//     }
+//   }
+// }

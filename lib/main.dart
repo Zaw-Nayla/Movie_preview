@@ -1,6 +1,7 @@
 import 'package:moviedb/model.dart';
 import 'package:moviedb/logIn.dart';
 import 'package:moviedb/register.dart';
+import 'package:moviedb/search.dart';
 
 import 'api.dart';
 import 'creditsmodel.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/login': (context) => const MyLogInPage(),
         '/main': (context) => const HomePage(),
+        '/search': (context) => const GetSearch(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -68,11 +70,11 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
-    CreditsAPI().credits(movieid).then((value) {
-      setState(() {
-        cast = value;
-      });
-    });
+    // CreditsAPI().credits(movieid).then((value) {
+    //   setState(() {
+    //     cast = value;
+    //   });
+    // });
   }
 
   @override
@@ -89,7 +91,9 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/search');
+            },
             icon: const Icon(Icons.search),
             splashRadius: 4,
           ),
@@ -102,119 +106,121 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Movies DataBase'),
         backgroundColor: const Color.fromARGB(80, 158, 158, 158),
       ),
-      body: Column(children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 50,
-          padding: const EdgeInsets.all(5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Text(
-                'Now Playing',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              )
-            ],
+      body: SingleChildScrollView(
+        child: Column(children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            padding: const EdgeInsets.all(5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Text(
+                  'Now Playing',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        playingMovies == null
-            ? const Center(
-                child: SpinKitCubeGrid(
-                  color: Colors.grey,
-                  size: 40.0,
+          playingMovies == null
+              ? const Center(
+                  child: SpinKitCubeGrid(
+                    color: Colors.grey,
+                    size: 40.0,
+                  ),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 160,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: playingMovies!.length,
+                      itemBuilder: (context, index) {
+                        return Design(
+                          imageint: index,
+                          movieType: playingMovies,
+                        );
+                      }),
                 ),
-              )
-            : SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 160,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: playingMovies!.length,
-                    itemBuilder: (context, index) {
-                      return Design(
-                        imageint: index,
-                        movieType: playingMovies,
-                      );
-                    }),
-              ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 50,
-          padding: const EdgeInsets.all(5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Text(
-                ' Up Coming',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              )
-            ],
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            padding: const EdgeInsets.all(5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Text(
+                  ' Up Coming',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        upComingMovies == null
-            ? const Center(
-                child: SpinKitCubeGrid(
-                  color: Colors.grey,
-                  size: 40.0,
+          upComingMovies == null
+              ? const Center(
+                  child: SpinKitCubeGrid(
+                    color: Colors.grey,
+                    size: 40.0,
+                  ),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 160,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: upComingMovies!.length,
+                      itemBuilder: (context, index) {
+                        return Design(
+                          imageint: index,
+                          movieType: upComingMovies,
+                        );
+                      }),
                 ),
-              )
-            : SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 160,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: upComingMovies!.length,
-                    itemBuilder: (context, index) {
-                      return Design(
-                        imageint: index,
-                        movieType: upComingMovies,
-                      );
-                    }),
-              ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 50,
-          padding: const EdgeInsets.all(5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Text(
-                ' Popular ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              )
-            ],
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 50,
+            padding: const EdgeInsets.all(5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Text(
+                  ' Popular ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        popular == null
-            ? const Center(
-                child: SpinKitCubeGrid(
-                  color: Colors.grey,
-                  size: 40.0,
+          popular == null
+              ? const Center(
+                  child: SpinKitCubeGrid(
+                    color: Colors.grey,
+                    size: 40.0,
+                  ),
+                )
+              : SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 160,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: popular!.length,
+                      itemBuilder: (context, index) {
+                        return Design(
+                          imageint: index,
+                          movieType: popular,
+                        );
+                      }),
                 ),
-              )
-            : SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 160,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: popular!.length,
-                    itemBuilder: (context, index) {
-                      return Design(
-                        imageint: index,
-                        movieType: popular,
-                      );
-                    }),
-              ),
-      ]),
+        ]),
+      ),
     );
   }
 }
@@ -273,7 +279,7 @@ class Design extends StatelessWidget {
                   SizedBox(
                     width: 200,
                     child: Text(
-                      movieType![imageint].originalTitle,
+                      movieType![imageint].originalTitle ?? 'unavaliable',
                       style: const TextStyle(
                           color: Color.fromARGB(255, 255, 255, 255)),
                     ),
@@ -295,12 +301,11 @@ class PopupDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        color: const Color.fromARGB(173, 255, 255, 255),
+        color: Color.fromARGB(214, 255, 255, 255),
         padding: const EdgeInsets.all(5),
         height: 250,
         width: 350,
         child: Row(
-          // crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Movietype == null
@@ -330,7 +335,7 @@ class PopupDialog extends StatelessWidget {
                   child: SizedBox(
                     width: 150,
                     child: Text(
-                      Movietype![movienum].originalTitle,
+                      Movietype![movienum].originalTitle ?? 'unavaliable',
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w700),
                     ),

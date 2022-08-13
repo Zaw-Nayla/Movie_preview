@@ -72,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 30,
                         ),
                         Text(
-                          ' Ready to watch? Now Enter your email to create or access your account. ',
+                          'Ready to watch? Now Enter your email to create or access your account. ',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
