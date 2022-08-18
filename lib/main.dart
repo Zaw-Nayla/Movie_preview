@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:moviedb/model.dart';
 import 'package:moviedb/login.dart';
@@ -16,6 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -274,8 +273,11 @@ class Design extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  DetailPage(movietype: movieType, imgint: imageint, id: movieType![imageint].id,)),
+              builder: (context) => DetailPage(
+                    movietype: movieType,
+                    imgint: imageint,
+                    id: movieType![imageint].id,
+                  )),
         );
       },
       // () {
@@ -300,8 +302,10 @@ class Design extends StatelessWidget {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                      image: NetworkImage(
-                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}'))),
+                      image:
+                      NetworkImage(
+                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}')
+                          )),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -509,7 +513,7 @@ class LogoutDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        height: 200,
+        height: 250,
         width: 300,
         decoration: BoxDecoration(
             color: const Color.fromARGB(239, 253, 253, 253),

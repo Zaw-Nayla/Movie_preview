@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moviedb/api.dart';
@@ -115,12 +116,46 @@ class _DetailPageState extends State<DetailPage> {
                             width: 120,
                             height: 180,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image(
-                                image: NetworkImage(
-                                    'https://image.tmdb.org/t/p/w200${widget.movietype![widget.imgint].posterPath}'),
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(8),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      'https://image.tmdb.org/t/p/w200${widget.movietype![widget.imgint].posterPath}',
+                                  placeholder: (context, url) => const SizedBox(
+                                    child: Center(
+                                        child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: SpinKitFadingCube(
+                                        color: Colors.white,
+                                        size: 40.0,
+                                      ),
+                                    )),
+                                  ),
+                                  errorWidget: (context, url, error) => Center(
+                                      child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      SizedBox(
+                                        width: 200,
+                                        child: Icon(
+                                          Icons.error,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Unavaliable',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  )),
+                                )
+                                // Image(
+                                //   image: NetworkImage(
+                                //       'https://image.tmdb.org/t/p/w200${widget.movietype![widget.imgint].posterPath}'),
+                                // ),
+                                ),
                           ),
                         ),
                         Padding(
@@ -130,7 +165,7 @@ class _DetailPageState extends State<DetailPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 230,
+                                width: 200,
                                 child: Text(
                                   widget.movietype![widget.imgint]
                                           .originalTitle ??
@@ -159,48 +194,47 @@ class _DetailPageState extends State<DetailPage> {
                                       style: const TextStyle(
                                           color: Colors.white, fontSize: 12),
                                     ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Container(
-                                        height: 20,
-                                        width: 80,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 1,
-                                            color: Colors.white,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.timelapse_outlined,
-                                                size: 15,
-                                                color: Colors.white,
-                                              ),
-                                              Text(
-                                                minutesToTimeOfDay(runtime)
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12),
-                                              )
-                                            ],
-                                          ),
-                                        ))
                                   ],
                                 ),
                               ),
                               Padding(
                                 padding:
+                                    const EdgeInsets.only(left: 10.0, top: 5),
+                                child: Container(
+                                    height: 20,
+                                    width: 80,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 1,
+                                        color: Colors.white,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.timelapse_outlined,
+                                            size: 15,
+                                            color: Colors.white,
+                                          ),
+                                          Text(
+                                            minutesToTimeOfDay(runtime)
+                                                .toString(),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          )
+                                        ],
+                                      ),
+                                    )),
+                              ),
+                              Padding(
+                                padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child: SizedBox(
-                                  width: 230,
+                                  width: 200,
                                   child: Text(
                                     tagline,
                                     style: const TextStyle(

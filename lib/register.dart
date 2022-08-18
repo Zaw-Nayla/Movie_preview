@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool pass = true;
   bool confirmpass = true;
   bool submitted = false;
+  bool isloading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -225,6 +226,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () async {
                         setState(() {
                           submitted = true;
+                          isloading = true;
                         });
                         if (_formKey.currentState!.validate()) {
                           try {
@@ -240,11 +242,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
                             prefs.setString('UserID', newUser.user!.uid);
                             setState(() {
+                              isloading = false;
                               Navigator.pushNamed(context, '/login');
                               userregistController.clear();
                               passwordregistController.clear();
                             });
                           } catch (e) {
+                            setState(() {
+                              isloading = false;
+                            });
                             print('Error >>>>>>>> $e');
                           }
                         }
@@ -254,18 +260,26 @@ class _RegisterPageState extends State<RegisterPage> {
                         padding: const EdgeInsets.only(left: 110, right: 110),
                         elevation: 15,
                       ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Text(
-                          'SignUp',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Libre',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      )),
+                      child: (isloading)
+                          ? const SizedBox(
+                              width: 15,
+                              height: 15,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ))
+                          : const Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                'SignUp',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Libre',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            )),
                   Container(
                       alignment: Alignment.center,
                       margin: const EdgeInsets.all(20),
