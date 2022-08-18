@@ -302,10 +302,8 @@ class Design extends StatelessWidget {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                      image:
-                      NetworkImage(
-                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}')
-                          )),
+                      image: NetworkImage(
+                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}'))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -550,7 +548,7 @@ class LogoutDialog extends StatelessWidget {
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
                       // ignore: use_build_context_synchronously
-                      Navigator.pop(context, '/');
+                      Navigator.pushNamed(context, '/');
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(8),
