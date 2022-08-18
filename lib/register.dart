@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -20,6 +21,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool submitted = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  final emialValidator = MultiValidator([
+    RequiredValidator(errorText: 'Email is required'),
+    EmailValidator(errorText: 'enter a valid email address'),
+  ]);
 
   final passwordValidator = MultiValidator([
     RequiredValidator(errorText: 'password is required'),
@@ -44,80 +50,69 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    margin: const EdgeInsets.all(30),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          'Unlimited Movies, Shows and More',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: <Shadow>[
-                              Shadow(
-                                offset: Offset(10.0, 10.0),
-                                blurRadius: 3.0,
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              Shadow(
-                                offset: Offset(5.0, 5.0),
-                                blurRadius: 5.0,
-                                color: Colors.black,
-                              ),
-                            ],
+                    margin: const EdgeInsets.all(20),
+                    child: const Text(
+                      'Unlimited Movies,Shows and More',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: <Shadow>[
+                          Shadow(
+                            offset: Offset(10.0, 10.0),
+                            blurRadius: 3.0,
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Text(
-                          'Ready to watch? Now Enter your email to create or access your account. ',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                          Shadow(
+                            offset: Offset(5.0, 5.0),
+                            blurRadius: 5.0,
+                            color: Colors.black,
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                  const SizedBox(
                     height: 50,
+                  ),
+                  SizedBox(
+                    height: 80,
                     width: 300,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                        ])),
                     child: TextFormField(
                       controller: userregistController,
                       autovalidateMode: submitted
                           ? AutovalidateMode.always
                           : AutovalidateMode.disabled,
-                      validator: RequiredValidator(errorText: 'Required'),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: ' Register Your Account',
-                      ),
+                      validator: emialValidator,
+                      decoration: InputDecoration(
+                          errorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Colors.redAccent),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Color.fromARGB(157, 0, 0, 0)),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(157, 0, 0, 0)),
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.redAccent),
+                              borderRadius: BorderRadius.circular(10)),
+                          filled: true,
+                          fillColor: const Color.fromARGB(178, 255, 255, 255),
+                          hintText: 'Enter Your Email ',
+                          hintStyle: const TextStyle(color: Colors.black)),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    height: 50,
+                  SizedBox(
+                    height: 80,
                     width: 300,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                        ])),
                     child: TextFormField(
                       controller: passwordregistController,
                       obscureText: pass,
@@ -125,68 +120,102 @@ class _RegisterPageState extends State<RegisterPage> {
                           ? AutovalidateMode.always
                           : AutovalidateMode.disabled,
                       validator: passwordValidator,
-                      onChanged: (value) {},
                       decoration: InputDecoration(
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                pass = !pass;
-                              });
-                            },
-                            icon: pass
-                                ? const Icon(
-                                    Icons.remove_red_eye,
-                                    color: Color.fromARGB(163, 20, 20, 20),
-                                  )
-                                : const Icon(
-                                    Icons.visibility_off,
-                                    color: Color.fromARGB(163, 19, 18, 18),
-                                  )),
-                        hintText: 'Enter Password',
-                      ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Colors.redAccent),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Color.fromARGB(157, 0, 0, 0)),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(157, 0, 0, 0)),
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.redAccent),
+                              borderRadius: BorderRadius.circular(10)),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  pass = !pass;
+                                });
+                              },
+                              splashRadius: 2,
+                              icon: pass
+                                  ? const Icon(
+                                      Icons.remove_red_eye,
+                                      color: Color.fromARGB(254, 20, 20, 20),
+                                    )
+                                  : const Icon(
+                                      Icons.visibility_off,
+                                      color: Color.fromARGB(254, 19, 18, 18),
+                                    )),
+                          filled: true,
+                          fillColor: const Color.fromARGB(178, 255, 255, 255),
+                          hintText: 'Enter Password',
+                          hintStyle: const TextStyle(color: Colors.black)),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    height: 50,
+                  SizedBox(
+                    height: 80,
                     width: 300,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                        ])),
                     child: TextFormField(
                       controller: confirmpasswordregistController,
                       obscureText: confirmpass,
                       autovalidateMode: submitted
                           ? AutovalidateMode.always
                           : AutovalidateMode.disabled,
-                      validator: (val) =>
-                          MatchValidator(errorText: 'passwords do not match')
-                              .validateMatch(val!, passwordregistController.text),
-                      onChanged: (value) {},
+                      validator: (val) => MatchValidator(
+                              errorText: 'passwords do not match')
+                          .validateMatch(val!, passwordregistController.text),
                       decoration: InputDecoration(
-                          border: InputBorder.none,
+                          errorBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Colors.redAccent),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: Color.fromARGB(157, 0, 0, 0)),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(157, 0, 0, 0)),
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedErrorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.redAccent),
+                              borderRadius: BorderRadius.circular(10)),
+                          // filled: true,
+                          // fillColor: const Color.fromARGB(178, 255, 255, 255),
                           suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
                                   confirmpass = !confirmpass;
                                 });
                               },
+                              splashRadius: 2,
                               icon: confirmpass
                                   ? const Icon(
                                       Icons.remove_red_eye,
-                                      color: Color.fromARGB(163, 20, 20, 20),
+                                      color: Color.fromARGB(254, 20, 20, 20),
                                     )
                                   : const Icon(
                                       Icons.visibility_off,
-                                      color: Color.fromARGB(163, 19, 18, 18),
+                                      color: Color.fromARGB(254, 19, 18, 18),
                                     )),
-                          hintText: 'Comfirm Your Password'),
+                          filled: true,
+                          fillColor: const Color.fromARGB(178, 255, 255, 255),
+                          hintText: 'Comfirm Your Password',
+                          hintStyle: const TextStyle(color: Colors.black)),
                     ),
                   ),
                   const SizedBox(
@@ -198,25 +227,37 @@ class _RegisterPageState extends State<RegisterPage> {
                           submitted = true;
                         });
                         if (_formKey.currentState!.validate()) {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          prefs.setString('userValue', userregistController.text);
-                          prefs.setString(
-                              'passValue', passwordregistController.text);
-                          setState(() {
-                            Navigator.pushNamed(context, '/login');
-                          });
+                          try {
+                            final auth = FirebaseAuth.instance;
+
+                            final newUser =
+                                await auth.createUserWithEmailAndPassword(
+                                    email: userregistController.text,
+                                    password: passwordregistController.text);
+                            print(newUser.user!.uid);
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+
+                            prefs.setString('UserID', newUser.user!.uid);
+                            setState(() {
+                              Navigator.pushNamed(context, '/login');
+                              userregistController.clear();
+                              passwordregistController.clear();
+                            });
+                          } catch (e) {
+                            print('Error >>>>>>>> $e');
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.red,
-                        padding: const EdgeInsets.only(left: 120, right: 120),
+                        padding: const EdgeInsets.only(left: 110, right: 110),
                         elevation: 15,
                       ),
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
                         child: Text(
-                          'Sign Up',
+                          'SignUp',
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Libre',
@@ -234,7 +275,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           const Text(
                             'Already have an account?',
                             style: TextStyle(
-                                color: Color.fromARGB(143, 255, 255, 255)),
+                                color: Color.fromARGB(255, 255, 255, 255)),
                           ),
                           TextButton(
                               onPressed: () {
@@ -243,9 +284,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 });
                               },
                               child: const Text(
-                                'Sign In',
+                                'SignIn',
                                 style: TextStyle(
-                                    color: Color.fromARGB(255, 148, 209, 240)),
+                                    color: Color.fromARGB(255, 148, 240, 234)),
                               ))
                         ],
                       ))

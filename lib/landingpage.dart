@@ -63,11 +63,11 @@ class _FrontScreenState extends State<FrontScreen> {
                         ),
                         child: const Padding(
                             padding: EdgeInsets.all(10.0),
-                            child: Text('Log IN',
+                            child: Text('LogIn',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontFamily: 'Edu',
-                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Libre',
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 20,
                                 ))),
                       ),
@@ -86,11 +86,11 @@ class _FrontScreenState extends State<FrontScreen> {
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
-                            'Sign UP',
+                            'SignUp',
                             style: TextStyle(
                               color: Color.fromARGB(155, 234, 16, 16),
-                              fontFamily: 'Edu',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Libre',
+                              fontWeight: FontWeight.w700,
                               fontSize: 20,
                             ),
                           ),

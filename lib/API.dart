@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:moviedb/creditsmodel.dart';
+import 'package:moviedb/detailmodel.dart';
 import 'package:moviedb/model.dart';
-import 'package:moviedb/search.dart';
 
 class API {
   Future<List<Movie>> nowPlaying() async {
@@ -60,6 +60,20 @@ class API {
     if (resp.statusCode == 200) {
       var movieresult = OverallResp.fromRawJson(resp.body);
       return movieresult.results;
+    } else {
+      throw Exception('Unable to Assest API');
+      // print(resp.statusCode);
+    }
+  }
+
+  Future<Detail> getDetails(int str) async {
+    var url = Uri.parse(
+        'https://api.themoviedb.org/3/movie/$str?api_key=050c28541f900007285c3020069bfd62&language=en-US');
+    final resp = await http.get(url);
+    print(resp.statusCode);
+    if (resp.statusCode == 200) {
+      var movieresult = Detail.fromRawJson(resp.body);
+      return movieresult;
     } else {
       throw Exception('Unable to Assest API');
       // print(resp.statusCode);

@@ -1,6 +1,8 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyLogInPage extends StatefulWidget {
   const MyLogInPage({Key? key}) : super(key: key);
@@ -16,8 +18,14 @@ class _MyLogInPageState extends State<MyLogInPage> {
   bool pass = true;
   bool confirmpass = true;
   bool submitted = false;
+  bool isloading = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  final emialValidator = MultiValidator([
+    RequiredValidator(errorText: 'Email is required'),
+    EmailValidator(errorText: 'enter a valid email address'),
+  ]);
 
   final passwordValidator = MultiValidator([
     RequiredValidator(errorText: 'password is required'),
@@ -25,187 +33,267 @@ class _MyLogInPageState extends State<MyLogInPage> {
   ]);
 
   bool eye = true;
-  var dropdownValue = '2';
+  var errorMassage = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Form(
-        key: _formKey,
-        child: Container(
-          // constraints: const BoxConstraints.expand(),
-          width: double.infinity,
-          // height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            
-              image: DecorationImage(
-            image: AssetImage('images/netflix.jpg'),
-            fit: BoxFit.cover,
-          )),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(30),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          'Unlimited Movies, Shows, and More',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: <Shadow>[
-                              Shadow(
-                                offset: Offset(10.0, 10.0),
-                                blurRadius: 3.0,
-                                color: Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: Colors.transparent,
+        body: Form(
+          key: _formKey,
+          child: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+              image: AssetImage('images/netflix.jpg'),
+              fit: BoxFit.cover,
+            )),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(30),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'Unlimited Movies, Shows, and More',
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(10.0, 10.0),
+                                    blurRadius: 3.0,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                  ),
+                                  Shadow(
+                                    offset: Offset(5.0, 5.0),
+                                    blurRadius: 9.0,
+                                    color: Colors.black,
+                                  ),
+                                ],
                               ),
-                              Shadow(
-                                offset: Offset(5.0, 5.0),
-                                blurRadius: 5.0,
-                                color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 80,
+                        width: 300,
+                        child: TextFormField(
+                          controller: usernamecontroller,
+                          autovalidateMode: submitted
+                              ? AutovalidateMode.always
+                              : AutovalidateMode.disabled,
+                          validator: emialValidator,
+                          decoration: InputDecoration(
+                              errorBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.red),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                            ],
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(157, 0, 0, 0)),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 1,
+                                      color: Color.fromARGB(157, 0, 0, 0)),
+                                  borderRadius: BorderRadius.circular(10)),
+                              focusedErrorBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 1, color: Colors.redAccent),
+                                  borderRadius: BorderRadius.circular(10)),
+                              filled: true,
+                              fillColor:
+                                  const Color.fromARGB(178, 255, 255, 255),
+                              hintText: 'Enter Your Email Account',
+                              hintStyle: const TextStyle(color: Colors.black)),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 70,
+                        width: 300,
+                        child: TextFormField(
+                          controller: passwordcontroller,
+                          obscureText: pass,
+                          autovalidateMode: submitted
+                              ? AutovalidateMode.always
+                              : AutovalidateMode.disabled,
+                          validator: passwordValidator,
+                          decoration: InputDecoration(
+                            errorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1, color: Colors.redAccent),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(157, 0, 0, 0)),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(157, 0, 0, 0)),
+                                borderRadius: BorderRadius.circular(10)),
+                            focusedErrorBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    width: 1, color: Colors.redAccent),
+                                borderRadius: BorderRadius.circular(10)),
+                            filled: true,
+                            fillColor: const Color.fromARGB(178, 255, 255, 255),
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    pass = !pass;
+                                  });
+                                },
+                                splashRadius: 2,
+                                icon: pass
+                                    ? const Icon(
+                                        Icons.remove_red_eye,
+                                        color: Color.fromARGB(254, 20, 20, 20),
+                                      )
+                                    : const Icon(
+                                        Icons.visibility_off,
+                                        color: Color.fromARGB(254, 19, 18, 18),
+                                      )),
+                            hintText: 'Enter Password',
+                            hintStyle: const TextStyle(color: Colors.black),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    height: 50,
-                    width: 300,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                        ])),
-                    child: TextFormField(
-                      controller: usernamecontroller,
-                      autovalidateMode: submitted
-                          ? AutovalidateMode.always
-                          : AutovalidateMode.disabled,
-                      validator: RequiredValidator(errorText: 'Required'),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Enter Your Account',
                       ),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    height: 50,
-                    width: 300,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(colors: [
-                          Colors.white.withOpacity(0.5),
-                          Colors.white.withOpacity(0.5),
-                        ])),
-                    child: TextFormField(
-                      controller: passwordcontroller,
-                      obscureText: pass,
-                      autovalidateMode: submitted
-                          ? AutovalidateMode.always
-                          : AutovalidateMode.disabled,
-                      validator: passwordValidator,
-                      onChanged: (value) {},
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                            onPressed: () {
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      ElevatedButton(
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            final String? username = prefs.getString('UserID');
+                            setState(() {
+                              submitted = true;
+                              print('$username');
+                            });
+                            if (_formKey.currentState!.validate()) {
                               setState(() {
-                                pass = !pass;
+                                isloading = true;
                               });
-                            },
-                            icon: pass
-                                ? const Icon(
-                                    Icons.remove_red_eye,
-                                    color: Color.fromARGB(163, 20, 20, 20),
-                                  )
-                                : const Icon(
-                                    Icons.visibility_off,
-                                    color: Color.fromARGB(163, 19, 18, 18),
-                                  )),
-                        hintText: 'Enter Password',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-              ElevatedButton(
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    final String? username = prefs.getString('userValue');
-                    final String? password = prefs.getString('passValue');
-                    setState(() {
-                      print(
-                          '$username + $password');
-                      if (usernamecontroller.text == username &&
-                          passwordcontroller.text == password) {
-                        Navigator.pushNamed(context, '/main');
-                        usernamecontroller.clear();
-                        passwordcontroller.clear();
-                      }
-                    });
-                  },style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                    padding: const EdgeInsets.only(left: 120, right: 120),
-                    elevation: 15,
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      'Log In',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Libre',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                  )),
-                  Container(
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Need to Create One?',
-                            style: TextStyle(
-                                color: Color.fromARGB(143, 255, 255, 255)),
-                          ),
-                          TextButton(
-                              onPressed: () {
+                              try {
+                                final auth = FirebaseAuth.instance;
+                                UserCredential currentUser =
+                                    await auth.signInWithEmailAndPassword(
+                                        email: usernamecontroller.text,
+                                        password: passwordcontroller.text);
+                                print(currentUser.user!.uid);
+                                if (currentUser.user!.uid != null) {
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.popUntil(
+                                      context, ModalRoute.withName('/'));
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.pushReplacementNamed(
+                                      context, '/main');
+                                  setState(() {
+                                    isloading = false;
+                                  });
+                                  usernamecontroller.clear();
+                                  passwordcontroller.clear();
+                                }
+                              } on FirebaseException catch (e) {
+                                if (e.code == 'user-not-found') {
+                                  errorMassage =
+                                      'No user found with this E-mail';
+                                } else if (e.code == 'wrong-password') {
+                                  errorMassage = ' Wrong password !';
+                                } else {
+                                  errorMassage = e.code;
+                                }
+                                // ignore: use_build_context_synchronously
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(errorMassage),
+                                        backgroundColor: Colors.red,
+                                        duration: const Duration(seconds: 1)));
                                 setState(() {
-                                  Navigator.pushNamed(context, '/register');
+                                  isloading = false;
                                 });
-                              },
-                              child: const Text('Sign UP',
+                              } catch (e) {
+                                // ignore: use_build_context_synchronously
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: Colors.red,
+                                        duration: const Duration(seconds: 1)));
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                            padding:
+                                const EdgeInsets.only(left: 110, right: 110),
+                            elevation: 15,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: isloading ?  const SizedBox(
+                                    width: 15,
+                                    height: 15,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ))
+                                :
+                            const Text(
+                              'LogIn',
                               style: TextStyle(
-                                color: Color.fromARGB(255, 148, 209, 240)
-                              ),)),
+                                color: Colors.black,
+                                fontFamily: 'Libre',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                          )),
+                      Container(
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.all(20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Need to Create One?',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      Navigator.pushNamed(context, '/register');
+                                    });
+                                  },
+                                  child: const Text(
+                                    'SignUp',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            Color.fromARGB(255, 148, 240, 234)),
+                                  )),
                               const SizedBox(
                                 height: 100,
                               )
-                        ],
-                      ))
-                      ]),
+                            ],
+                          ))
+                    ]),
+              ),
             ),
-                ),
-      ),
+          ),
         ));
   }
 }

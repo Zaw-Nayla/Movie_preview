@@ -1,15 +1,24 @@
+import 'dart:html';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:moviedb/model.dart';
-import 'package:moviedb/logIn.dart';
+import 'package:moviedb/login.dart';
 import 'package:moviedb/register.dart';
 import 'package:moviedb/search.dart';
+import 'detail.dart';
 
 import 'api.dart';
 import 'creditsmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'landingpage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -47,10 +56,21 @@ List<Movie>? playingMovies;
 List<Movie>? upComingMovies;
 List<Movie>? popular;
 List<Cast>? cast;
-int movieid = 438148;
+int movieid = 616037;
 int ind = 0;
 
 class _HomePageState extends State<HomePage> {
+  void loginCheck() {
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        print('User is currently signed out!');
+        Navigator.pushNamed(context, '/');
+      } else {
+        print('User is signed in!');
+      }
+    });
+  }
+
   myPlaying() {
     API().nowPlaying().then((value) {
       setState(() {
@@ -70,6 +90,12 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
+    // API().getDetails(movieid).then((value) {
+    //   setState(() {
+    //     details = value;
+    //   });
+    // });
+
     // CreditsAPI().credits(movieid).then((value) {
     //   setState(() {
     //     cast = value;
@@ -81,6 +107,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     myPlaying();
+    loginCheck();
   }
 
   @override
@@ -99,7 +126,11 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/');
+                showDialog(
+                    context: context,
+                    builder: ((context) {
+                      return const LogoutDialog();
+                    }));
               },
               icon: const Icon(Icons.logout_outlined))
         ],
@@ -236,15 +267,25 @@ class Design extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var rating = movieType![imageint].voteAverage / 10.round();
     return GestureDetector(
       onTap: () {
-        print(imageint);
-        showDialog(
-            context: context,
-            builder: (context) {
-              return PopupDialog(movienum: imageint, Movietype: movieType);
-            });
+        print(movieType![imageint].id);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  DetailPage(movietype: movieType, imgint: imageint, id: movieType![imageint].id,)),
+        );
       },
+      // () {
+      //   print(imageint);
+      //   showDialog(
+      //       context: context,
+      //       builder: (context) {
+      //         return PopupDialog(movienum: imageint, Movietype: movieType);
+      //       });
+      // },
       child: movieType == null
           ? const Center(
               child: SpinKitCubeGrid(
@@ -265,16 +306,34 @@ class Design extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: const Color.fromARGB(142, 0, 0, 0),
-                    radius: 12,
-                    child: Text(
-                      '${movieType![imageint].voteAverage}',
-                      style: const TextStyle(
-                        color: Colors.lightGreen,
-                        fontSize: 10,
-                      ),
-                    ),
+                  SizedBox(
+                    width: 36,
+                    child: CircleAvatar(
+                        backgroundColor: const Color.fromARGB(147, 0, 0, 0),
+                        radius: 18,
+                        child: SizedBox(
+                            child: Stack(
+                          children: <Widget>[
+                            Center(
+                              child: CircularProgressIndicator(
+                                  value: rating,
+                                  strokeWidth: 2,
+                                  color: (rating < 0.5)
+                                      ? Colors.redAccent
+                                      : (rating < 0.7)
+                                          ? Colors.yellow
+                                          : Colors.greenAccent),
+                            ),
+                            Center(
+                                child: Text(
+                              '${movieType![imageint].voteAverage}',
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ))
+                          ],
+                        ))),
                   ),
                   SizedBox(
                     width: 200,
@@ -301,7 +360,7 @@ class PopupDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        color: Color.fromARGB(214, 255, 255, 255),
+        color: const Color.fromARGB(214, 255, 255, 255),
         padding: const EdgeInsets.all(5),
         height: 250,
         width: 350,
@@ -436,6 +495,80 @@ class PopupDialog extends StatelessWidget {
                 ),
               ],
             )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LogoutDialog extends StatelessWidget {
+  const LogoutDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        height: 200,
+        width: 300,
+        decoration: BoxDecoration(
+            color: const Color.fromARGB(239, 253, 253, 253),
+            borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                  image:
+                      DecorationImage(image: AssetImage('images/Log-out.png'))),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                'Are you Sure?',
+                style: TextStyle(fontFamily: 'Libre', fontSize: 20),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context, '/');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(8),
+                    ),
+                    child: const Text('Sure')),
+                const SizedBox(
+                  width: 40,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color.fromARGB(226, 253, 253, 253),
+                      padding: const EdgeInsets.all(8),
+                    ),
+                    child: const Text(
+                      'Nope',
+                      style: TextStyle(color: Colors.black),
+                    ))
+              ],
+            ),
           ],
         ),
       ),

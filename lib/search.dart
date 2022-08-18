@@ -31,7 +31,7 @@ class _GetSearchState extends State<GetSearch> {
               color: Colors.white,
             ),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/main');
             },
           ),
           title: TextFormField(
@@ -50,7 +50,7 @@ class _GetSearchState extends State<GetSearch> {
             },
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: 'Search',
+              hintText: 'Search Here',
               hintStyle: const TextStyle(color: Colors.white),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.search),
@@ -79,30 +79,34 @@ class _GetSearchState extends State<GetSearch> {
                   ),
                 )
               : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Results for "$searchText"',
-                      style: const TextStyle(
-                        fontFamily: 'Libre',
-                        color: Colors.white,
-                        fontSize: 20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Results for "$searchText"',
+                        style: const TextStyle(
+                          fontFamily: 'Libre',
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: ListView.builder(
-                            itemCount: getsearch!.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return searchDesign(
-                                  movienum: index, Movietype: getsearch);
-                            })),
-                  ],
+                      getsearch!.isEmpty ?  const Text('Found no relelated movie with the search',
+                      style: TextStyle(
+                        color: Colors.red
+                      ),) :
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: ListView.builder(
+                              itemCount: getsearch!.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return searchDesign(
+                                    movienum: index, Movietype: getsearch);
+                              })),
+                    ],
+                  ),
                 ),
-              ),
         ],
       ),
     );
@@ -233,7 +237,14 @@ class searchDesign extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: SizedBox(
                   width: 150,
-                  child: Text(
+                  child:  Movietype![movienum].overview == null ? 
+                  const Text(
+                    'Overview : Unaviable',
+                    maxLines: 3,
+                    style:  TextStyle(fontSize: 10, color: Colors.white),
+                  )
+                  :
+                  Text(
                     'Overview : ${Movietype![movienum].overview}',
                     maxLines: 3,
                     style: const TextStyle(fontSize: 10, color: Colors.white),
