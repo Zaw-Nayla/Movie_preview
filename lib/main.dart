@@ -474,7 +474,7 @@ class PopupDialog extends StatelessWidget {
                           backgroundColor: Color.fromARGB(90, 255, 255, 255),
                           radius: 15,
                           child: Icon(
-                            Icons.thumb_up_alt_outlined,
+                            Icons.favorite_border_outlined,
                             color: Colors.black,
                           ),
                         ),
