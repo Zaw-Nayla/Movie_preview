@@ -302,8 +302,9 @@ class Design extends StatelessWidget {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                      image: NetworkImage(
-                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}'))),
+                      image: NetworkImage( 
+                          'https://image.tmdb.org/t/p/original${movieType![imageint].backdropPath}')
+                          )),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -225,10 +225,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   ElevatedButton(
                       onPressed: () async {
                         setState(() {
-                          submitted = true;
                           isloading = true;
                         });
                         if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            submitted = true;
+                          });
                           try {
                             final auth = FirebaseAuth.instance;
 

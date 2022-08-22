@@ -25,8 +25,8 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   Detail? details;
+  List<Genre> gener = [];
   String gener1 = '';
-  String gener2 = '';
   String tagline = '';
   int runtime = 0;
   String releasedate = '';
@@ -35,8 +35,9 @@ class _DetailPageState extends State<DetailPage> {
     API().getDetails(widget.id).then((value) {
       setState(() {
         details = value;
-        gener1 = details!.genres[0].name;
-        gener2 = details!.genres[1].name;
+        gener = details!.genres;
+        // gener1 = details!.genres[0].name;
+        // gener2 = details!.genres[1].name;
         tagline = details!.tagline;
         runtime = details!.runtime;
         releasedate = release(details!.releaseDate.toString());
@@ -178,23 +179,20 @@ class _DetailPageState extends State<DetailPage> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      gener1,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    ),
-                                    const Text(
-                                      ' / ',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Text(
-                                      gener2,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    ),
-                                  ],
+                                child: SizedBox(
+                                  width: 200,
+                                  height: 20,
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: gener.length,
+                                      itemBuilder: (context, index) {
+                                        gener1 = gener[index].name;
+                                        return Text(
+                                          "$gener1 . ",
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        );
+                                      }),
                                 ),
                               ),
                               Padding(
